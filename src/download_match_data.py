@@ -4,6 +4,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
+from google.cloud import storage
 
 #%% Define functions
 def load_page(url):
@@ -22,18 +23,21 @@ def extract_file_name(url):
     fname = year + "_" + comp_cd + ".csv"
     return fname
 
-def load_data_local(url, fname, out_dir_path):
+def download_file(url, file_name, out_dir_path):
     r = requests.get(url)
-    out_fpath = out_dir_path + fname
-    open(out_fpath, 'wb').write(r.content)
-    return
+    out_file_path = out_dir_path + file_name
+    open(out_file_path, 'wb').write(r.content)
 
-def load_data_cloud(fpath, name):
-    return
+def upload_cloud_storage(in_file_path, out_file_path, bucket):
+    blob = bucket(out_file_path)
+    blob.upload_from_file(in_file_path)
 
 #%% Main
-url = "https://www.football-data.co.uk/englandm.php"
-root_url = "https://www.football-data.co.uk/"
-
-
-# %%
+def main():
+    url = "https://www.football-data.co.uk/englandm.php"
+    root_url = "https://www.football-data.co.uk/"
+    # Create storage client
+    client = storage.Client()
+    # Create bucket object
+    bucket = client.bucket("football-analytics-platform")
+    # Create a blob
