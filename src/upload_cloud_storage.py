@@ -2,11 +2,17 @@
 
 # %% Import libraries
 import os
+import re
 from google.cloud import storage
 
 # %% Define functions
 def set_google_application_credentials(credentials_file_path):
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_file_path
+
+def extract_blob_path(dest_folder_path, src_file_path):
+    file_name = re.search(r"/(\w+\.csv)",src_file_path)[1]
+    dest_blob_path = dest_folder_path + file_name
+    return dest_blob_path
 
 def upload_cloud_storage(bucket_name, source_file_path, destination_blob_path):
     """Uploads a file to Cloud Storage bucket."""
