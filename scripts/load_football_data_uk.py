@@ -24,7 +24,7 @@ def main():
     BUCKET_NAME = "football-analytics-platform"
     BLOB_FOLDER = "landing/football-data-uk/"
 
-    print("Begin...")
+    print("BEGIN")
     # Download data to local disk
     print("Starting download...")
     page = load_page(URL)
@@ -44,7 +44,7 @@ def main():
         dest_blob_path = extract_blob_path(BLOB_FOLDER, src_file_path)
         upload_cloud_storage(BUCKET_NAME, src_file_path, dest_blob_path)
     print("Finished upload!")
-    print("All done!")
+    print("END")
 
 if __name__ == '__main__':
     main()
