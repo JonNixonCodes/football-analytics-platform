@@ -10,12 +10,15 @@ from src.transform_match_data import transform_csv
 
 # %% Define constants
 TEST_FILE_0 = "/home/jon-dev/Workbench/Projects/football-analytics-platform/data/landing/football-data-uk/0001_E0.csv"
+TEST_FILE_1 = "/home/jon-dev/Workbench/Projects/football-analytics-platform/data/landing/football-data-uk/2021_E3.csv"
 
 # %% Tests
 def test_transform_csv_0():
-    output_data = transform_csv(input_file_path=TEST_FILE_0)
-    assert(len(output_data)) > 0
-    assert(len(output_data[0])) > 0
+    test_files = [TEST_FILE_0,TEST_FILE_1]
+    for test in test_files:
+        output_data = transform_csv(input_file_path=test)
+        assert(len(output_data)) > 0
+        assert(len(output_data[0])) > 0
 
 # %% Main
 def main():

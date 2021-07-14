@@ -4,7 +4,12 @@ from datetime import datetime
 # %% Define functions
 def date_string_conversion(in_date_str):
     """Convert date from d/m/y to Y-m-d"""
-    in_date_dt = datetime.strptime(in_date_str, "%d/%m/%y")
+    if len(in_date_str)==10: # date string format: "%d/%m/%Y"
+        in_date_dt = datetime.strptime(in_date_str, "%d/%m/%Y")
+    elif len(in_date_str)==8: # date string format: "%d/%m/%y"
+        in_date_dt = datetime.strptime(in_date_str, "%d/%m/%y")
+    else:
+        raise("Invalid date string")
     out_date_str = datetime.strftime(in_date_dt, "%Y-%m-%d")
     return out_date_str
 
