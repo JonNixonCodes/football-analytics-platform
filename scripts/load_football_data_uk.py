@@ -1,12 +1,21 @@
 # load_football_data_uk.py
 
-# %% Add project home directory to system path variable
+# %% Import libraries
 import sys
+
+# %% Import user libraries
 sys.path.append("/home/jon-dev/Workbench/Projects/football-analytics-platform")
 
-# %% Import libraries
 from src.download_match_data import * 
 from src.upload_cloud_storage import *
+
+# %% Define constants
+URL = "https://www.football-data.co.uk/englandm.php"
+ROOT_URL = "https://www.football-data.co.uk/"
+DEST_DIR = "/home/jon-dev/Workbench/Projects/football-analytics-platform/data/landing/football-data-uk/"
+CRED_PATH = "/home/jon-dev/Workbench/Projects/football-analytics-platform/.env/football-analytics-platform-fdf39ee7f4bb.json"
+BUCKET_NAME = "football-analytics-platform"
+BLOB_FOLDER = "landing/football-data-uk/"
 
 #%% Main
 def main():
@@ -15,14 +24,6 @@ def main():
     Keyword arguments:
     bucket_name -- Cloud Storage bucket name
     """
-
-    # Define local constants
-    URL = "https://www.football-data.co.uk/englandm.php"
-    ROOT_URL = "https://www.football-data.co.uk/"
-    DEST_DIR = "/home/jon-dev/Workbench/Projects/football-analytics-platform/data/football-data-uk/"
-    CRED_PATH = "/home/jon-dev/Workbench/Projects/football-analytics-platform/credentials/football-analytics-platform-fdf39ee7f4bb.json"
-    BUCKET_NAME = "football-analytics-platform"
-    BLOB_FOLDER = "landing/football-data-uk/"
 
     print("BEGIN")
     # Download data to local disk
