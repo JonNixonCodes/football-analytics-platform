@@ -13,7 +13,7 @@ from src.upload_cloud_storage import *
 URL = "https://www.football-data.co.uk/englandm.php"
 ROOT_URL = "https://www.football-data.co.uk/"
 DEST_DIR = "/home/jon-dev/Workbench/Projects/football-analytics-platform/data/landing/football-data-uk/"
-CRED_PATH = "/home/jon-dev/Workbench/Projects/football-analytics-platform/.env/football-analytics-platform-fdf39ee7f4bb.json"
+CRED_PATH = "/home/jon-dev/Workbench/Projects/football-analytics-platform/credentials/football-analytics-platform-fdf39ee7f4bb.json"
 BUCKET_NAME = "football-analytics-platform"
 BLOB_FOLDER = "landing/football-data-uk/"
 
