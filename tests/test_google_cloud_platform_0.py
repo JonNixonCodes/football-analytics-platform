@@ -1,7 +1,8 @@
 # test_google_cloud_platform_0.py
 
-# %% Import libraries
+# %% Import external libraries
 import sys, os
+from google.cloud import storage
 
 # %% Import user libraries
 sys.path.append("/home/jon-dev/Workbench/Projects/football-analytics-platform")
@@ -26,8 +27,16 @@ def test_set_google_application_credentials_0():
     assert(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS') != None)
 
 def test_upload_cloud_storage_0():
+    # Setup Cloud Storage client
+    set_google_application_credentials(GOOGLE_APPLICATION_CREDENTIALS_FILE_PATH)
+    storage_client = storage.Client()
+    # Upload test files to cloud storage
     upload_cloud_storage(BUCKET_NAME, DEST_BLOB_PATH_0, source_file_path=SRC_FILE_PATH_0)
     upload_cloud_storage(BUCKET_NAME, DEST_BLOB_PATH_1, source_file_path=SRC_FILE_PATH_1)
+    # Check files are in cloud storage
+    blob_names = [b.name for b in storage_client.list_blobs(BUCKET_NAME)]
+    assert(DEST_BLOB_PATH_0 in blob_names)
+    assert(DEST_BLOB_PATH_1 in blob_names)
 
 # %% Main
 def main():
