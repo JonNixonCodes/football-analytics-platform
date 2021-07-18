@@ -1,7 +1,7 @@
 # football_data_uk.transform
 
 # %% Import libraries
-import csv
+import csv, re
 from datetime import datetime
 
 # %% Define column functions
@@ -17,71 +17,86 @@ def date_string_conversion(in_date_str):
     return out_date_str
 
 # %% Define column mapping
-COLUMN_MAP = {
-    "Div":{"name":"div", "type":str, "default":None, "func":None},
-    "Date":{"name":"date", "type":str, "default":None, "func":date_string_conversion},
-    "HomeTeam":{"name":"home_team", "type":str, "default":None, "func":None},
-    "AwayTeam":{"name":"away_team", "type":str, "default":None, "func":None},
-    "FTHG":{"name":"full_time_home_gls", "type":int, "default":None, "func":None},
-    "FTAG":{"name":"full_time_away_gls", "type":int, "default":None, "func":None},
-    "FTR":{"name":"full_time_rslt", "type":str, "default":None, "func":None},
-    "HTHG":{"name":"half_time_home_gls", "type":str, "default":None, "func":None},
-    "HTAG":{"name":"half_time_away_gls", "type":str, "default":None, "func":None},
-    "HTR":{"name":"half_time_rslt", "type":str, "default":None, "func":None},
-    "Attendance":{"name":"attn", "type":str, "default":None, "func":None},
-    "Referee":{"name":"ref", "type":str, "default":None, "func":None},
-    "HS":{"name":"home_team_shts", "type":int, "default":None, "func":None},
-    "AS":{"name":"away_team_shts", "type":int, "default":None, "func":None},
-    "HST":{"name":"home_shts_on_trgt", "type":int, "default":None, "func":None},
-    "AST":{"name":"away_shts_on_trgt", "type":int, "default":None, "func":None},
-    "HHW":{"name":"home_team_hit_wood", "type":int, "default":None, "func":None},
-    "AHW":{"name":"away_team_hit_wood", "type":int, "default":None, "func":None},
-    "HC":{"name":"home_team_crnr", "type":int, "default":None, "func":None},
-    "AC":{"name":"away_team_crnr", "type":int, "default":None, "func":None},
-    "HF":{"name":"home_team_foul", "type":int, "default":None, "func":None},
-    "AF":{"name":"away_team_foul", "type":int, "default":None, "func":None},
-    "HO":{"name":"home_team_offs", "type":int, "default":None, "func":None},
-    "AO":{"name":"away_team_offs", "type":int, "default":None, "func":None},
-    "HY":{"name":"home_team_yllw", "type":int, "default":None, "func":None},
-    "AY":{"name":"away_team_yllw", "type":int, "default":None, "func":None},
-    "HR":{"name":"home_team_red", "type":int, "default":None, "func":None},
-    "AR":{"name":"away_team_red", "type":int, "default":None, "func":None}
-}
+OUTPUT_COLUMNS = [
+    {"name":"div", "source_name":"Div", "type":str, "default":None, "func":None},
+    {"name":"seas", "source_name":None, "type":str, "default":None, "func":None},
+    {"name":"date", "source_name":"Date", "type":str, "default":None, "func":date_string_conversion},
+    {"name":"home_team", "source_name":"HomeTeam", "type":str, "default":None, "func":None},
+    {"name":"away_team", "source_name":"AwayTeam", "type":str, "default":None, "func":None},
+    {"name":"full_time_home_gls", "source_name":"FTHG", "type":int, "default":None, "func":None},
+    {"name":"full_time_away_gls", "source_name":"FTAG", "type":int, "default":None, "func":None},
+    {"name":"full_time_rslt", "source_name":"FTR", "type":str, "default":None, "func":None},
+    {"name":"half_time_home_gls", "source_name":"HTHG", "type":str, "default":None, "func":None},
+    {"name":"half_time_away_gls", "source_name":"HTAG", "type":str, "default":None, "func":None},
+    {"name":"half_time_rslt", "source_name":"HTR", "type":str, "default":None, "func":None},
+    {"name":"attn", "source_name":"Attendance", "type":str, "default":None, "func":None},
+    {"name":"ref", "source_name":"Referee", "type":str, "default":None, "func":None},
+    {"name":"home_team_shts", "source_name":"HS", "type":int, "default":None, "func":None},
+    {"name":"away_team_shts", "source_name":"AS", "type":int, "default":None, "func":None},
+    {"name":"home_shts_on_trgt", "source_name":"HST", "type":int, "default":None, "func":None},
+    {"name":"away_shts_on_trgt", "source_name":"AST", "type":int, "default":None, "func":None},
+    {"name":"home_team_hit_wood", "source_name":"HHW", "type":int, "default":None, "func":None},
+    {"name":"away_team_hit_wood", "source_name":"AHW", "type":int, "default":None, "func":None},
+    {"name":"home_team_crnr", "source_name":"HC", "type":int, "default":None, "func":None},
+    {"name":"away_team_crnr", "source_name":"AC", "type":int, "default":None, "func":None},
+    {"name":"home_team_foul", "source_name":"HF", "type":int, "default":None, "func":None},
+    {"name":"away_team_foul", "source_name":"AF", "type":int, "default":None, "func":None},
+    {"name":"home_team_offs", "source_name":"HO", "type":int, "default":None, "func":None},
+    {"name":"away_team_offs", "source_name":"AO", "type":int, "default":None, "func":None},
+    {"name":"home_team_yllw", "source_name":"HY", "type":int, "default":None, "func":None},
+    {"name":"away_team_yllw", "source_name":"AY", "type":int, "default":None, "func":None},
+    {"name":"home_team_red", "source_name":"HR", "type":int, "default":None, "func":None},
+    {"name":"away_team_red", "source_name":"AR", "type":int, "default":None, "func":None}    
+]
 
 # %% Define functions
-def transform_csv_row(row):
+def extract_season_from_file_path(file_path):
+    """Extract season from file path."""
+    match = re.search(r"/(\d{4})_\w+.csv",file_path)
+    if match == None:
+        raise Exception("extract_season_from_file_path: No match found")
+    return match.group(1)
+
+
+def transform_csv_row(row, additional_fields={}):
     """Transform one row of data"""
     output_row = {}
-    for k in COLUMN_MAP.keys():
-        if k in row.keys():
-            output_key = COLUMN_MAP[k]["name"]
-            output_val = COLUMN_MAP[k]["type"](row[k])
-            if COLUMN_MAP[k]["func"] != None:
-                output_val = COLUMN_MAP[k]["func"](row[k])          
-        else:
-            output_key = COLUMN_MAP[k]["name"]
-            output_val = COLUMN_MAP[k]["default"]
+    for col in OUTPUT_COLUMNS:
+        source_key = col["source_name"]
+        output_key = col["name"]
+        output_val = col["default"]
+        if source_key in row.keys():
+            source_val = row[source_key]            
+            output_key = col["name"]
+            output_val = col["type"](source_val)
+            if col["func"] != None:
+                output_val = col["func"](output_val)
         output_row[output_key] = output_val
+    output_row.update(additional_fields)
     return output_row
+
 
 def read_transform_csv_data(source_file_path):
     """Read source data and apply transformation"""
     data = []
+    additional_fields = {"seas":extract_season_from_file_path(source_file_path)}
     with open(source_file_path, 'r') as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
-            tf_row = transform_csv_row(row)
+            tf_row = transform_csv_row(row, additional_fields)
             data.append(tf_row)
     return data
+
 
 def write_data_to_file(destination_file_path, data):
     """Write data to destination"""
     with open(destination_file_path, 'w', newline='') as csv_file:
-        fieldnames = [v["name"] for v in COLUMN_MAP.values()]
+        fieldnames = [col["name"] for col in OUTPUT_COLUMNS]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         for row in data:
             writer.writerow(row)
+
 
 def transform_csv(destination_file_path, source_file_path):
     """Transform CSV file from football-data.uk"""
@@ -89,5 +104,3 @@ def transform_csv(destination_file_path, source_file_path):
     output_data = read_transform_csv_data(source_file_path)
     # Write transformed data to destination file path
     write_data_to_file(destination_file_path, output_data)
-
-
