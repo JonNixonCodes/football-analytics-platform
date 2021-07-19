@@ -6,8 +6,8 @@ import sys, click, yaml
 # %% Import user libraries
 sys.path.append("/home/jon-dev/Workbench/Projects/football-analytics-platform")
 
-from src.football_data_uk import get_csv_url, download_csv
-from src.google_cloud_platform import set_google_application_credentials, upload_cloud_storage
+from football_analytics_platform.src.football_data_uk import get_csv_url, download_csv
+from football_analytics_platform.src.google_cloud_platform import set_google_application_credentials, upload_cloud_storage
 
 #%% Define functions
 @click.command()
