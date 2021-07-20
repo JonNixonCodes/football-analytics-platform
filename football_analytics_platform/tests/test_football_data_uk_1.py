@@ -6,7 +6,7 @@ import sys, os
 # %% Import user libraries
 sys.path.append("/home/jon-dev/Workbench/Projects/football-analytics-platform")
 
-from football_analytics_platform.src.football_data_uk  import transform_csv
+from football_analytics_platform.source.football_data_uk  import transform_csv
 
 # %% Define constants
 SEASON_0 = "0001"

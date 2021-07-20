@@ -7,7 +7,7 @@ from google.cloud import storage
 # %% Import user libraries
 sys.path.append("/home/jon-dev/Workbench/Projects/football-analytics-platform")
 
-from football_analytics_platform.src.google_cloud_platform import set_google_application_credentials, upload_cloud_storage
+from football_analytics_platform.source.google_cloud_platform import set_google_application_credentials, upload_cloud_storage
 
 # %% Define constants
 SEASON_0 = "9900"
