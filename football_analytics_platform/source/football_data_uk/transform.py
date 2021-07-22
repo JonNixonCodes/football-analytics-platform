@@ -76,6 +76,14 @@ def transform_csv_row(row, additional_fields={}):
     return output_row
 
 
+def is_row_empty(row):
+    ret_val = False
+    col = OUTPUT_COLUMNS[0]
+    source_key = col["source_name"]
+    if len(row[source_key])==0:
+        ret_val = True
+    return ret_val
+
 def read_transform_csv_data(source_file_path):
     """Read source data and apply transformation"""
     data = []
@@ -83,6 +91,8 @@ def read_transform_csv_data(source_file_path):
     with open(source_file_path, 'r') as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
+            if (is_row_empty(row) == True): # Skip empty rows
+                continue
             tf_row = transform_csv_row(row, additional_fields)
             data.append(tf_row)
     return data
