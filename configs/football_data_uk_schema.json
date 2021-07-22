@@ -1,0 +1,176 @@
+[
+    {
+        "description":"Division",
+        "mode":"REQUIRED",
+        "name":"div",
+        "type":"String"
+    },
+    {
+        "description":"Season",
+        "mode":"REQUIRED",
+        "name":"seas",
+        "type":"String"
+    },
+    {
+        "description":"Date",
+        "mode":"REQUIRED",
+        "name":"date",
+        "type":"String"
+    },
+    {
+        "description":"Home team",
+        "mode":"REQUIRED",
+        "name":"home_team",
+        "type":"String"
+    },
+    {
+        "description":"Away team",
+        "mode":"REQUIRED",
+        "name":"away_team",
+        "type":"String"
+    },
+    {
+        "description":"Full time home goals",
+        "mode":"NULLABLE",
+        "name":"full_time_home_gls",
+        "type":"Integer"
+    },
+    {
+        "description":"Full time away goals",
+        "mode":"NULLABLE",
+        "name":"full_time_away_gls",
+        "type":"Integer"
+    },
+    {
+        "description":"Full time result",
+        "mode":"NULLABLE",
+        "name":"full_time_rslt",
+        "type":"String"
+    },
+    {
+        "description":"Half time home goals",
+        "mode":"NULLABLE",
+        "name":"half_time_home_gls",
+        "type":"Integer"
+    },
+    {
+        "description":"Half time away goals",
+        "mode":"NULLABLE",
+        "name":"half_time_away_gls",
+        "type":"Integer"
+    },
+    {
+        "description":"Half time result",
+        "mode":"NULLABLE",
+        "name":"half_time_rslt",
+        "type":"String"
+    },
+    {
+        "description":"Attendance",
+        "mode":"NULLABLE",
+        "name":"attn",
+        "type":"String"
+    },
+    {
+        "description":"Referee",
+        "mode":"NULLABLE",
+        "name":"ref",
+        "type":"String"
+    },
+    {
+        "description":"Home team shots",
+        "mode":"NULLABLE",
+        "name":"home_team_shts",
+        "type":"Integer"
+    },
+    {
+        "description":"Away team shots",
+        "mode":"NULLABLE",
+        "name":"away_team_shts",
+        "type":"Integer"
+    },
+    {
+        "description":"Home team shots on target",
+        "mode":"NULLABLE",
+        "name":"home_team_shts_on_trgt",
+        "type":"Integer"
+    },
+    {
+        "description":"Away team shots on target",
+        "mode":"NULLABLE",
+        "name":"away_shts_on_trgt",
+        "type":"Integer"
+    },
+    {
+        "description":"Home team hit woodwork",
+        "mode":"NULLABLE",
+        "name":"home_team_hit_wood",
+        "type":"Integer"
+    },
+    {
+        "description":"Away team hit woodwork",
+        "mode":"NULLABLE",
+        "name":"away_team_hit_wood",
+        "type":"Integer"
+    },
+    {
+        "description":"Home team corner",
+        "mode":"NULLABLE",
+        "name":"home_team_crnr",
+        "type":"Integer"
+    },
+    {
+        "description":"Away team crnr",
+        "mode":"NULLABLE",
+        "name":"away_team_crnr",
+        "type":"Integer"
+    },
+    {
+        "description":"Home team foul",
+        "mode":"NULLABLE",
+        "name":"home_team_foul",
+        "type":"Integer"
+    },
+    {
+        "description":"Away team foul",
+        "mode":"NULLABLE",
+        "name":"away_team_foul",
+        "type":"Integer"
+    },
+    {
+        "description":"Home team offside",
+        "mode":"NULLABLE",
+        "name":"home_team_offs",
+        "type":"Integer"
+    },
+    {
+        "description":"Away team offside",
+        "mode":"NULLABLE",
+        "name":"away_team_offs",
+        "type":"Integer"
+    },
+    {
+        "description":"Home team yellow card",
+        "mode":"NULLABLE",
+        "name":"home_team_yllw",
+        "type":"Integer"
+    },
+    {
+        "description":"Away team yellow card",
+        "mode":"NULLABLE",
+        "name":"away_team_yllw",
+        "type":"Integer"
+    },
+    {
+        "description":"Home team red card",
+        "mode":"NULLABLE",
+        "name":"home_team_red",
+        "type":"Integer"
+    },
+    {
+        "description":"Away team red card",
+        "mode":"NULLABLE",
+        "name":"away_team_red",
+        "type":"Integer"
+    }
+]
