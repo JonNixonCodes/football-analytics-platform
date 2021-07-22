@@ -7,7 +7,7 @@ from google.cloud import storage
 # %% Import user libraries
 sys.path.append("/home/jon-dev/Workbench/Projects/football-analytics-platform")
 
-from football_analytics_platform.source.google_cloud_platform import set_google_application_credentials, upload_cloud_storage
+from football_analytics_platform.source.google_cloud_platform import set_google_application_credentials, upload_cloud_storage, download_cloud_storage
 
 # %% Define constants
 SEASON_0 = "9900"
@@ -20,6 +20,10 @@ DEST_BLOB_PATH_0 = f"test/{SEASON_0}_{DIV_0}.csv"
 DEST_BLOB_PATH_1 = f"test/{SEASON_1}_{DIV_1}.csv"
 SRC_FILE_PATH_0 = f"/home/jon-dev/Workbench/Projects/football-analytics-platform/data/test/{SEASON_0}_{DIV_0}.csv"
 SRC_FILE_PATH_1 = f"/home/jon-dev/Workbench/Projects/football-analytics-platform/data/test/{SEASON_1}_{DIV_1}.csv"
+SRC_BLOB_PATH_0 = f"test/{SEASON_0}_{DIV_0}.csv"
+SRC_BLOB_PATH_1 = f"test/{SEASON_1}_{DIV_1}.csv"
+DEST_FILE_PATH_0 = f"/home/jon-dev/Workbench/Projects/football-analytics-platform/data/test/gcp/{SEASON_0}_{DIV_0}.csv"
+DEST_FILE_PATH_1 = f"/home/jon-dev/Workbench/Projects/football-analytics-platform/data/test/gcp/{SEASON_1}_{DIV_1}.csv"
 
 # %% Tests
 def test_set_google_application_credentials_0():
@@ -38,11 +42,22 @@ def test_upload_cloud_storage_0():
     assert(DEST_BLOB_PATH_0 in blob_names)
     assert(DEST_BLOB_PATH_1 in blob_names)
 
+def test_download_cloud_storage_0():
+    # Setup Cloud Storage client
+    set_google_application_credentials(GOOGLE_APPLICATION_CREDENTIALS_FILE_PATH)
+    # Download test files from cloud storage
+    download_cloud_storage(DEST_FILE_PATH_0,BUCKET_NAME,SRC_BLOB_PATH_0)
+    download_cloud_storage(DEST_FILE_PATH_1,BUCKET_NAME,SRC_BLOB_PATH_1)
+    # Check files exist
+    assert((os.path.exists(DEST_FILE_PATH_0)) and (os.path.getsize(DEST_FILE_PATH_0) > 0))
+    assert((os.path.exists(DEST_FILE_PATH_1)) and (os.path.getsize(DEST_FILE_PATH_1) > 0))
+
 # %% Main
 def main():
     print("Running tests...")
     test_set_google_application_credentials_0()
     test_upload_cloud_storage_0()
+    test_download_cloud_storage_0()
     print("All passed!")
 
 if __name__=="__main__":
