@@ -88,7 +88,7 @@ def read_transform_csv_data(source_file_path):
     """Read source data and apply transformation"""
     data = []
     additional_fields = {"seas":extract_season_from_file_path(source_file_path)}
-    with open(source_file_path, 'r') as csv_file:
+    with open(source_file_path, 'r', encoding='windows-1252') as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
             if (is_row_empty(row) == True): # Skip empty rows
