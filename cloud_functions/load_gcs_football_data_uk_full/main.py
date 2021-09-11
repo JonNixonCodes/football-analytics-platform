@@ -1,47 +1,65 @@
 # load_gcs_football_data_uk_full.main.py
 
 # %% Import external libraries
-import sys, click, yaml
+import re, os, tempfile
 
 # %% Import user libraries
-from lib.football_data_uk import get_csv_url, download_csv
-from lib.google_cloud_platform import set_google_application_credentials, upload_cloud_storage
+from libs.extract_load import load_page, scrape_urls, download_csv, upload_blob
 
 # %% Define constants
-ENGLAND_FOOTBALL_DATA_URL = "https://www.football-data.co.uk/englandm.php"
+FOOTBALL_DATA_URL = "https://www.football-data.co.uk/englandm.php"
 ROOT_URL = "https://www.football-data.co.uk/"
-URL_PATTERN = r"mmz4281/\d{4}/\w{2}.csv"
+URL_REGEX_PATTERN = r"mmz4281/\d{4}/\w{2}.csv"
+SEASON_REGEX_PATTERN = r".*mmz4281/(\d{4})/\w{2}.csv"
+COMPETITION_REGEX_PATTERN = r".*mmz4281/\d{4}/(\w{2}).csv"
+BUCKET_NAME = "football-analytics-platform"
+BLOB_DIR = "landing/football-data-uk"
+TMP_DIR = tempfile.gettempdir()
 
 #%% Define functions
-@click.command()
-@click.argument("config_path")
-def run(config_path):
-    """ Load data from www.football-data.co.uk to Cloud Storage"""
-    print("BEGIN")
+def format_url(relative_url, root_url=ROOT_URL):
+    return root_url+relative_url
 
-    # Read in yaml file
-    with open(config_path, 'r') as ymlfile:
-        config = yaml.safe_load(ymlfile)
+def name_file(url):
+    season_match = re.match(SEASON_REGEX_PATTERN, url)
+    competition_match = re.match(COMPETITION_REGEX_PATTERN, url)
+    if season_match and competition_match:
+        season = str(season_match.group(1))
+        competition = str(competition_match.group(1))
+    else:
+        return None
+    return f"{season}_{competition}.csv"
 
-    # Download data to local disk
-    print("Starting download...")
-    for job in config["JOBS"]:
-        source_url = get_csv_url(season=job["SEASON"], division=job["DIVISION"])
-        download_csv(destination_file_path=job["LOCAL_PATH"], source_url=source_url)
-    print("Finished download!")
+def extract_load_one_file(bucket_name, tmp_dir, blob_dir, source_url):
+    filename = name_file(source_url)
+    tmp_file_path = tmp_dir+"/"+filename
+    blob_path = blob_dir+"/"+filename
+    download_csv(\
+        destination_file_path=tmp_file_path, 
+        source_url=source_url)
+    upload_blob(\
+        bucket_name=bucket_name, 
+        destination_blob_path=blob_path, 
+        source_file_path=tmp_file_path)
+    # Delete temporary file
+    # os.remove(tmp_file_path)
 
-    # Upload data to cloud
-    print("Starting upload...")
-    set_google_application_credentials(config["GOOGLE_CREDENTIAL_PATH"])
-    for job in config["JOBS"]:
-        upload_cloud_storage(
-            bucket_name=config["BUCKET_NAME"], 
-            destination_blob_path=job["DESTINATION_BLOB_PATH"], 
-            source_file_path=job["LOCAL_PATH"])
-    print("Finished upload!")
+def run():
+    """ Full batch load of data from www.football-data.co.uk to Cloud Storage"""
+    # Load page
+    html_text = load_page(FOOTBALL_DATA_URL)
+    # Extract list of URLs to downloadable CSV files
+    urls = scrape_urls(html_text=html_text, pattern=URL_REGEX_PATTERN)
+    urls = [url for url in map(lambda x: format_url(relative_url=x), urls)]
+    # TEST
+    urls = urls[:10]
+    # Extract and Load each CSV file
+    map(\
+        lambda x: extract_load_one_file(\
+            bucket_name=BUCKET_NAME, 
+            tmp_dir=TMP_DIR,
+            blob_dir=BLOB_DIR,
+            source_url=x),
+        urls)
 
-    print("END")
-
-# %% Main
-if __name__ == '__main__':
-    run()
+# %%
