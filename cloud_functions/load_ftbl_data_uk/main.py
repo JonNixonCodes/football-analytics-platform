@@ -1,10 +1,10 @@
-# load_gcs_football_data_uk_full.main.py
+# load_ftbl_data_uk.main.py
 
 # %% Import external libraries
 import re, os, tempfile
 
 # %% Import user libraries
-from libs.extract_load import load_page, scrape_urls, download_csv, upload_blob
+from libs import load_page, scrape_urls, download_csv, upload_blob
 
 # %% Define constants
 FOOTBALL_DATA_URL = "https://www.football-data.co.uk/englandm.php"
@@ -17,8 +17,8 @@ BLOB_DIR = "landing/football-data-uk"
 TMP_DIR = tempfile.gettempdir()
 
 #%% Define functions
-def format_url(relative_url, root_url=ROOT_URL):
-    return root_url+relative_url
+def global_url(local_url, root_url=ROOT_URL):
+    return root_url+local_url
 
 def name_file(url):
     season_match = re.match(SEASON_REGEX_PATTERN, url)
@@ -30,7 +30,7 @@ def name_file(url):
         return None
     return f"{season}_{competition}.csv"
 
-def extract_load_one_file(bucket_name, tmp_dir, blob_dir, source_url):
+def extract_load_one_file(source_url, bucket_name=BUCKET_NAME, tmp_dir=TMP_DIR, blob_dir=BLOB_DIR):
     filename = name_file(source_url)
     tmp_file_path = tmp_dir+"/"+filename
     blob_path = blob_dir+"/"+filename
@@ -43,23 +43,15 @@ def extract_load_one_file(bucket_name, tmp_dir, blob_dir, source_url):
         source_file_path=tmp_file_path)
     # Delete temporary file
     # os.remove(tmp_file_path)
+    return None
 
-def run():
+def run(request):
     """ Full batch load of data from www.football-data.co.uk to Cloud Storage"""
     # Load page
     html_text = load_page(FOOTBALL_DATA_URL)
     # Extract list of URLs to downloadable CSV files
-    urls = scrape_urls(html_text=html_text, pattern=URL_REGEX_PATTERN)
-    urls = [url for url in map(lambda x: format_url(relative_url=x), urls)]
-    # TEST
-    urls = urls[:10]
+    local_urls = scrape_urls(html_text=html_text, pattern=URL_REGEX_PATTERN)
+    global_urls = [global_url(local_url=url) for url in local_urls]
     # Extract and Load each CSV file
-    map(\
-        lambda x: extract_load_one_file(\
-            bucket_name=BUCKET_NAME, 
-            tmp_dir=TMP_DIR,
-            blob_dir=BLOB_DIR,
-            source_url=x),
-        urls)
-
-# %%
+    _ = [extract_load_one_file(source_url=url) for url in global_urls]
+    return 'OK'
