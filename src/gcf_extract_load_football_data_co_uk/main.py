@@ -46,4 +46,6 @@ def run(request):
         open(temp_file_path, 'wb').write(r.content)
         # Write temporary file to Google Cloud Storage
         blob.upload_from_filename(temp_file_path)
-        return 'OK'
+    
+    # Send OK response
+    return 'OK'
